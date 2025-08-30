@@ -1,0 +1,75 @@
+body{
+background-color: #6A5ACD;
+font-family: Verdana, Geneva, Tahoma, sans-serif;
+font-size: 35px;
+background-position: center;
+background-size: cover;
+}
+
+
+.conteiner{
+max-width: 600px;
+margin: 0 auto;
+background-color:#483D8B;
+padding: 20px 30px;
+border-radius: 20px;
+}
+
+.hh{
+    text-align: center;
+  color: rgb(2, 2, 2);
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 20px ;
+  font-size: 70px;
+  cursor: pointer;
+  font-weight: bold;
+  background: transparent;
+  position: relative;
+  transition: all 1s;
+  overflow: hidden;
+}
+.hh:hover{
+    color: white;
+}
+
+
+form{
+    text-align: center;
+    
+}
+
+.botao{
+    border-radius: 20px;
+    font-size: 10px;
+    width: 250px;
+    height: 65px;
+    border: 3px solid  #6A5ACD;
+    border-radius: 45px;
+    transition: all 0.3s;
+    cursor: pointer;
+    background: white;
+    font-size: 1.2em;
+    font-weight: 550;
+    margin: 25px;
+    
+}
+
+.botao:hover {
+  background: #99a5de;
+  color: white;
+  font-size: 1.5em;
+}
+
+input{
+    box-sizing: border-box;
+    max-width: 190px;
+    padding: 0.875rem;
+    font-size: 1rem;
+    border: 1.5px solid #000;
+    border-radius: 0.5rem;
+    box-shadow: 2.5px 3px 0 #000;
+    outline: none;
+    transition: ease 0.25s;
+    margin: 10px;
+}
