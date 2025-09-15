@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
+import Login from './login'; 
 
-function App() {
+function Cadastro() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -12,7 +14,7 @@ function App() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3001/api/usuarios/cadastrar', {
+      const response = await fetch('http://localhost:5000/api/usuarios/cadastrar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -26,12 +28,17 @@ function App() {
         throw new Error(data.error || 'Erro ao cadastrar');
       }
 
-      alert(`Usuário ${nome} cadastrado com sucesso!`);
+      alert(`Usuário ${nome} cadastrado com sucesso! Redirecionando para login...`);
       
       // Limpar formulário
       setNome("");
       setEmail("");
       setSenha("");
+
+      // Redirecionar para login após 2 segundos
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 2000);
 
     } catch (error) {
       alert(error.message);
@@ -42,7 +49,7 @@ function App() {
 
   return (
     <div className="conteiner">
-      <h1 className="hh">Cadastro</h1>
+      <h1 className="hh">CADASTRO</h1>
       <form onSubmit={handleSubmit}>
         <input
           type='text'
@@ -81,6 +88,18 @@ function App() {
         </button>
       </form>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Navigate to="/cadastro" />} />
+        <Route path="/cadastro" element={<Cadastro />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </Router>
   );
 }
 
