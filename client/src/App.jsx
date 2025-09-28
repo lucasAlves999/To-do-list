@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './App.css';
 import Login from './login'; 
+import Tarefas from './tarefas'
 
 function Cadastro() {
   const [nome, setNome] = useState("");
@@ -86,6 +88,12 @@ function Cadastro() {
         >
           {loading ? 'Cadastrando...' : 'Cadastrar'}
         </button>
+        <p className='paragrafos'>
+          Já tem uma conta?{' '}
+          <Link to="/login" className='lk'>
+            Faça login
+          </Link> 
+        </p>
       </form>
     </div>
   );
@@ -98,6 +106,7 @@ function App() {
         <Route path="/" element={<Navigate to="/cadastro" />} />
         <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/tarefas" element={<Tarefas />} />
       </Routes>
     </Router>
   );

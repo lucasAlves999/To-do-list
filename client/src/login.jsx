@@ -1,10 +1,13 @@
 import { useState } from 'react';
-import './App.css'; // Reutilize o mesmo CSS
+import './App.css'; 
+
+import { Link, useNavigate } from 'react-router-dom';
 
 function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +29,7 @@ function Login() {
       }
 
       alert(`Bem-vindo de volta!`);
-      // Aqui você pode redirecionar para a dashboard
+      navigate('/tarefas')
       
     } catch (error) {
       alert(error.message);
@@ -65,6 +68,10 @@ function Login() {
         >
           {loading ? 'Entrando...' : 'Entrar'}
         </button>
+
+        <Link to="/cadastro" className='lk'>
+          Cadastro
+        </Link>
       </form>
     </div>
   );

@@ -1,6 +1,3 @@
-/* ==========================
-   NOVO CSS - TO DO LIST
-   ========================== */
 
 body {
     background: linear-gradient(135deg, #6A5ACD, #8A2BE2);
@@ -91,3 +88,24 @@ input:focus {
 input:hover {
     box-shadow: 2.5px 3px 5px #8A2BE2;
 }
+
+
+
+.paragrafos{
+    margin-top: 15px;
+    color: white;
+    font-size: 20px;
+    
+}
+
+
+/* links */
+
+.lk{
+    color: #8A2BE2;
+    font-weight: bold;
+    font-size: 20px;
+
+}
+
+
