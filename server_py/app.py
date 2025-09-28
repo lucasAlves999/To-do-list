@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -11,7 +12,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-# Modelo dentro do app.py
+
 class Usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(80), nullable=False)
@@ -21,11 +22,31 @@ class Usuario(db.Model):
     def __repr__(self):
         return f"<Usuario {self.nome}>"
 
+
+class Tarefa(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    descricao = db.Column(db.String(255), nullable=False)
+    concluida = db.Column(db.Boolean, default=False)
+    data_criacao = db.Column(db.DateTime, default=datetime.utcnow)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'))
+
+    def __repr__(self):
+        return f"<Tarefa {self.descricao}>"
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'descricao': self.descricao,
+            'concluida': self.concluida,
+            'data_criacao': self.data_criacao.isoformat(),
+            'usuario_id': self.usuario_id
+        }
+
 # Cria tabelas no banco
 with app.app_context():
     db.create_all()
 
-# Rotas
+
 @app.route("/")
 def home():
     return jsonify({"message": "Backend Flask rodando com MySQL!"})
@@ -71,6 +92,34 @@ def login():
         })
     else:
         return jsonify({"error": "Email ou senha incorretos"}), 401
+
+
+@app.route("/api/tarefas", methods=["POST"])
+def criar_tarefa():
+    data = request.json
+    descricao = data.get("descricao")
+    usuario_id = data.get("usuario_id", 1)  # Temporário - use 1 para teste
+
+    if not descricao:
+        return jsonify({"error": "Descrição da tarefa é obrigatória"}), 400
+
+    nova_tarefa = Tarefa(descricao=descricao, usuario_id=usuario_id)
+    db.session.add(nova_tarefa)
+    db.session.commit()
+
+    return jsonify({
+        "message": "Tarefa criada com sucesso!",
+        "tarefa": nova_tarefa.to_dict()
+    }), 201
+
+@app.route("/api/tarefas", methods=["GET"])
+def listar_tarefas():
+    usuario_id = request.args.get('usuario_id', 1)  # Temporário
+    tarefas = Tarefa.query.filter_by(usuario_id=usuario_id).order_by(Tarefa.data_criacao.desc()).all()
+    
+    return jsonify({
+        "tarefas": [tarefa.to_dict() for tarefa in tarefas]
+    })
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

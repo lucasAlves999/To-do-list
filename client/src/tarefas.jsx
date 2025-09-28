@@ -1,10 +1,97 @@
+import { useState } from 'react';
 import './tarefas.css';
 
 export default function Tarefas() {
-  return (
-    <div className="tarefas-container">
-      <h1 className="tarefas-title">🏠 Bem-vindo à Home!</h1>
-      <p className="tarefas-message">Você está logado com sucesso.</p>
-    </div>
-  );
+    const [novaTarefa, setNovaTarefa] = useState('');
+    const [mensagem, setMensagem] = useState('');
+    const [carregando, setCarregando] = useState(false);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        if (!novaTarefa.trim()) {
+            setMensagem('Por favor, digite uma tarefa!');
+            return;
+        }
+
+        setCarregando(true);
+        setMensagem('');
+
+        try {
+            const response = await fetch('http://localhost:5000/api/tarefas', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    descricao: novaTarefa,
+                    usuario_id: 1  
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setMensagem('✅ Tarefa adicionada com sucesso!');
+                setNovaTarefa(''); // Limpa o input
+            } else {
+                setMensagem(`❌ Erro: ${data.error}`);
+            }
+        } catch (error) {
+            setMensagem('❌ Erro de conexão com o servidor');
+            console.error('Erro:', error);
+        } finally {
+            setCarregando(false);
+        }
+    };
+
+    return (
+        <>
+            {/* Header/Banner */}
+            <div className="tarefas-container">
+                <h1 className="tarefas-title">Bem-vindo às Minhas Tarefas!</h1>
+                <p className="tarefas-message">Organize seu dia de forma simples e eficiente!</p>
+            </div>
+            
+            {/* Área de Criação de Tarefas */}
+            <div className="criar-tarefa-container">
+                <h2>Nova Tarefa</h2>
+                
+                <form onSubmit={handleSubmit} className="form-tarefa">
+                    <input 
+                        type="text" 
+                        placeholder="Digite sua tarefa..."
+                        className="input-tarefa"
+                        value={novaTarefa}
+                        onChange={(e) => setNovaTarefa(e.target.value)}
+                        disabled={carregando}
+                    />
+                    
+                    <button 
+                        type="submit" 
+                        className="btn-adicionar"
+                        disabled={carregando}
+                    >
+                        {carregando ? '⏳ Adicionando...' : '➕ Adicionar Tarefa'}
+                    </button>
+                </form>
+
+                {mensagem && (
+                    <div className={`mensagem ${mensagem.includes('❌') ? 'erro' : 'sucesso'}`}>
+                        {mensagem}
+                    </div>
+                )}
+            </div>
+            
+            {/* Lista de Tarefas */}
+            <div className="lista-tarefas-container">
+                <h3>Suas Tarefas</h3>
+                <div className="tarefas-list">
+                    <p className="lista-vazia">
+                        As tarefas aparecerão aqui após serem criadas...
+                    </p>
+                </div>
+            </div>
+        </>
+    );
 }
