@@ -98,7 +98,7 @@ def login():
 def criar_tarefa():
     data = request.json
     descricao = data.get("descricao")
-    usuario_id = data.get("usuario_id", 1)  # Temporário - use 1 para teste
+    usuario_id = data.get("usuario_id", 1)  
 
     if not descricao:
         return jsonify({"error": "Descrição da tarefa é obrigatória"}), 400
@@ -114,7 +114,7 @@ def criar_tarefa():
 
 @app.route("/api/tarefas", methods=["GET"])
 def listar_tarefas():
-    usuario_id = request.args.get('usuario_id', 1)  # Temporário
+    usuario_id = request.args.get('usuario_id', 1)  
     tarefas = Tarefa.query.filter_by(usuario_id=usuario_id).order_by(Tarefa.data_criacao.desc()).all()
     
     return jsonify({

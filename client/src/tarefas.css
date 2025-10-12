@@ -1,56 +1,42 @@
-/* Tarefas.css - totalmente isolado */
+
+/* Container principal */
 .tarefas-container {
-    all: initial; /* Reseta estilos herdados */
-    display: block;
-    top: 0;
-    max-width: 600px;
-    margin: 0px auto;
-    padding: 20px;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 40px 20px;
     text-align: center;
-    font-family: Arial, sans-serif;
-    
+    border-radius: 0 0 20px 20px;
+    margin-bottom: 30px;
 }
 
 .tarefas-title {
-    all: initial;
-    display: block;
-    font-size: 2.2rem;
-    color: #333;
-    margin-bottom: 20px;
-    font-family: inherit;
-    font-weight: bold;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    font-weight: 700;
 }
 
 .tarefas-message {
-    all: initial;
-    display: block;
     font-size: 1.1rem;
-    color: #666;
-    font-family: inherit;
+    opacity: 0.9;
 }
 
-
-
-/* crud tarefas */
-
-/* Container de Criação */
+/* Container de criação de tarefas */
 .criar-tarefa-container {
-    max-width: 600px;
-    margin: 30px auto;
-    padding: 25px;
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-    font-family: Arial, sans-serif;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .criar-tarefa-container h2 {
-    color: #2c3e50;
+    color: #333;
     margin-bottom: 20px;
-    text-align: center;
+    font-size: 2rem;
+    
 }
 
 /* Formulário */
@@ -61,64 +47,56 @@
 }
 
 .input-tarefa {
-    padding: 12px 16px;
-    border: 2px solid #e1e8ed;
+    background: white;
+    border: 2px solid #e0e0e0;
     border-radius: 8px;
+    padding: 12px 15px;
     font-size: 16px;
-    transition: border-color 0.3s;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .input-tarefa:focus {
     outline: none;
-    border-color: #3498db;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.input-tarefa::placeholder {
+    color: #999;
 }
 
 /* Botão */
 .btn-adicionar {
-    padding: 12px 20px;
-    background: #27ae60;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
+    padding: 12px 25px;
     border-radius: 8px;
     font-size: 16px;
-    font-weight: bold;
+    font-weight: 600;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: all 0.3s ease;
 }
 
-.btn-adicionar:hover {
-    background: #219a52;
+.btn-adicionar:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
-/* Container da Lista */
-.lista-tarefas-container {
-    max-width: 600px;
-    margin: 30px auto;
-    padding: 25px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+.btn-adicionar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
 }
 
-.lista-tarefas-container h3 {
-    color: #2c3e50;
-    margin-bottom: 15px;
-    text-align: center;
-}
-
-.lista-vazia {
-    text-align: center;
-    color: #7f8c8d;
-    font-style: italic;
-    padding: 20px;
-}
-
+/* Mensagens */
 .mensagem {
-    margin-top: 15px;
-    padding: 12px;
+    padding: 12px 15px;
     border-radius: 8px;
-    text-align: center;
-    font-weight: bold;
+    margin-top: 15px;
+    font-weight: 500;
 }
 
 .mensagem.sucesso {
@@ -133,13 +111,117 @@
     border: 1px solid #f5c6cb;
 }
 
-/* Estado de carregamento */
-.btn-adicionar:disabled {
-    background: #95a5a6;
-    cursor: not-allowed;
+/* Container da lista de tarefas */
+.lista-tarefas-container {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.input-tarefa:disabled {
+.lista-tarefas-container h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 2rem;
+}
+
+/* Lista de tarefas */
+.tarefas-list {
+    min-height: 100px;
+}
+
+.lista-carregando {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 20px;
+}
+
+/* AQUI FOI MODIFICADO - Estilo para lista vazia com aparência de input */
+.lista-vazia.input-tarefa {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px 15px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    color: #666;
+    font-style: italic;
+    text-align: center;
+    margin: 0;
+}
+
+/* AQUI FOI MODIFICADO - Estilo para os itens da lista com aparência de input */
+.lista-tarefas {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tarefa-item.input-tarefa {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px 15px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+/* AQUI FOI MODIFICADO - Efeito hover para os itens */
+.tarefa-item.input-tarefa:hover {
     background: #f8f9fa;
-    cursor: not-allowed;
+    border-color: #007bff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tarefa-item.input-tarefa:last-child {
+    margin-bottom: 0;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .tarefas-container {
+        padding: 30px 15px;
+        border-radius: 0 0 15px 15px;
+    }
+    
+    .tarefas-title {
+        font-size: 2rem;
+    }
+    
+    .criar-tarefa-container,
+    .lista-tarefas-container {
+        margin-left: 15px;
+        margin-right: 15px;
+        padding: 20px;
+    }
+    
+    .form-tarefa {
+        gap: 12px;
+    }
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tarefa-item.input-tarefa {
+    animation: fadeIn 0.3s ease;
 }

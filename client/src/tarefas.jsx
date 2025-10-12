@@ -1,10 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './tarefas.css';
 
 export default function Tarefas() {
     const [novaTarefa, setNovaTarefa] = useState('');
     const [mensagem, setMensagem] = useState('');
     const [carregando, setCarregando] = useState(false);
+    const [tarefas, setTarefas] = useState([]); 
+    const [carregandoTarefas, setCarregandoTarefas] = useState(true); 
+
+    // Buscar tarefas existentes
+    const buscarTarefas = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/api/tarefas?usuario_id=1');
+            const data = await response.json();
+            
+            if (response.ok) {
+                setTarefas(data.tarefas || []);
+            } else {
+                console.error('Erro ao buscar tarefas:', data.error);
+            }
+        } catch (error) {
+            console.error('Erro de conexão:', error);
+        } finally {
+            setCarregandoTarefas(false);
+        }
+    };
+
+    // Buscar tarefas quando o componente carregar
+    useEffect(() => {
+        buscarTarefas();
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -34,6 +59,7 @@ export default function Tarefas() {
             if (response.ok) {
                 setMensagem('✅ Tarefa adicionada com sucesso!');
                 setNovaTarefa(''); // Limpa o input
+                buscarTarefas(); // ← ATUALIZA a lista após adicionar
             } else {
                 setMensagem(`❌ Erro: ${data.error}`);
             }
@@ -83,13 +109,25 @@ export default function Tarefas() {
                 )}
             </div>
             
-            {/* Lista de Tarefas */}
+             {/* Lista de Tarefas */}
             <div className="lista-tarefas-container">
                 <h3>Suas Tarefas</h3>
                 <div className="tarefas-list">
-                    <p className="lista-vazia">
-                        As tarefas aparecerão aqui após serem criadas...
-                    </p>
+                    {carregandoTarefas ? (
+                        <p className="lista-carregando">Carregando tarefas...</p>
+                    ) : tarefas.length === 0 ? (
+                        <div className="input-tarefa lista-vazia">
+                            As tarefas aparecerão aqui após serem criadas...
+                        </div>
+                    ) : (
+                        <ul className="lista-tarefas">
+                            {tarefas.map((tarefa) => (
+                                <li key={tarefa.id} className="tarefa-item input-tarefa">
+                                    {tarefa.descricao}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
             </div>
         </>
