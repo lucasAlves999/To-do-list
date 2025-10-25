@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -7,8 +8,10 @@ app = Flask(__name__)
 CORS(app)
 
 # Configuração do MySQL
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Jtd4789%40@localhost:3306/meu_banco'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://todo_user:todo_password@localhost:3307/todo_app'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
 
 db = SQLAlchemy(app)
 
@@ -121,5 +124,5 @@ def listar_tarefas():
         "tarefas": [tarefa.to_dict() for tarefa in tarefas]
     })
 
-if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
