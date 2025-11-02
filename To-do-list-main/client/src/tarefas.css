@@ -1,0 +1,306 @@
+
+/* Container principal */
+.tarefas-container {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+    border-radius: 0 0 20px 20px;
+    margin-bottom: 30px;
+}
+
+.tarefas-title {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.tarefas-message {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* Container de criação de tarefas */
+.criar-tarefa-container {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.criar-tarefa-container h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 2rem;
+    
+}
+
+/* Formulário */
+.form-tarefa {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.input-tarefa {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px 15px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-tarefa:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.input-tarefa::placeholder {
+    color: #999;
+}
+
+/* Botão */
+.btn-adicionar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-adicionar:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-adicionar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Mensagens */
+.mensagem {
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+    font-weight: 500;
+}
+
+.mensagem.sucesso {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.mensagem.erro {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Container da lista de tarefas */
+.lista-tarefas-container {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.lista-tarefas-container h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 2rem;
+}
+
+/* Lista de tarefas */
+.tarefas-list {
+    min-height: 100px;
+}
+
+.lista-carregando {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 20px;
+}
+
+/* AQUI FOI MODIFICADO - Estilo para lista vazia com aparência de input */
+.lista-vazia.input-tarefa {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px 15px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    color: #666;
+    font-style: italic;
+    text-align: center;
+    margin: 0;
+}
+
+/* AQUI FOI MODIFICADO - Estilo para os itens da lista com aparência de input */
+.lista-tarefas {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tarefa-item.input-tarefa {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px 15px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+/* AQUI FOI MODIFICADO - Efeito hover para os itens */
+.tarefa-item.input-tarefa:hover {
+    background: #f8f9fa;
+    border-color: #007bff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tarefa-item.input-tarefa:last-child {
+    margin-bottom: 0;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .tarefas-container {
+        padding: 30px 15px;
+        border-radius: 0 0 15px 15px;
+    }
+    
+    .tarefas-title {
+        font-size: 2rem;
+    }
+    
+    .criar-tarefa-container,
+    .lista-tarefas-container {
+        margin-left: 15px;
+        margin-right: 15px;
+        padding: 20px;
+    }
+    
+    .form-tarefa {
+        gap: 12px;
+    }
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tarefa-item.input-tarefa {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Estilos para o gerenciamento de datas */
+.input-tarefa[type="datetime-local"] {
+    font-family: inherit;
+}
+
+/* Estilos para estatísticas */
+.estatisticas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.estatistica-item {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid #e9ecef;
+}
+
+.estatistica-numero {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.estatistica-label {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Status das tarefas */
+.tarefa-atrasada {
+    border-left: 4px solid #dc3545 !important;
+}
+
+.tarefa-concluida {
+    background-color: #f8fff8 !important;
+    opacity: 0.7;
+}
+
+/* Botões de ação */
+.btn-acao {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-excluir {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-excluir:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+}
+
+/* Checkbox customizado */
+.checkbox-custom {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #6A5ACD;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.checkbox-custom.concluida {
+    background: #6A5ACD;
+}
