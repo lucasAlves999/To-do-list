@@ -9,12 +9,21 @@ export default function Tarefas() {
     const [mensagem, setMensagem] = useState('');
     const [carregando, setCarregando] = useState(false);
     const [tarefas, setTarefas] = useState([]); 
-    const [carregandoTarefas, setCarregandoTarefas] = useState(true); 
+    const [carregandoTarefas, setCarregandoTarefas] = useState(true);
+    
+    // ✅ PEGAR O ID DO USUÁRIO LOGADO
+    const usuarioId = localStorage.getItem('usuario_id');
+    const usuarioNome = localStorage.getItem('usuario_nome') || 'Usuário';
 
-    // Buscar tarefas existentes
+    // Buscar tarefas existentes DO USUÁRIO LOGADO
     const buscarTarefas = async () => {
+        if (!usuarioId) {
+            setMensagem('❌ Usuário não identificado. Faça login novamente.');
+            return;
+        }
+
         try {
-            const response = await fetch('http://localhost:5000/api/tarefas?usuario_id=1');
+            const response = await fetch(`http://localhost:5000/api/tarefas?usuario_id=${usuarioId}`);
             const data = await response.json();
             
             if (response.ok) {
@@ -32,11 +41,16 @@ export default function Tarefas() {
     // Buscar tarefas quando o componente carregar
     useEffect(() => {
         buscarTarefas();
-    }, []);
+    }, [usuarioId]); // ✅ Recarregar quando o usuarioId mudar
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         
+        if (!usuarioId) {
+            setMensagem('❌ Usuário não identificado. Faça login novamente.');
+            return;
+        }
+
         if (!novaTarefa.descricao.trim()) {
             setMensagem('Por favor, digite uma tarefa!');
             return;
@@ -54,7 +68,7 @@ export default function Tarefas() {
                 body: JSON.stringify({
                     descricao: novaTarefa.descricao,
                     due_date: novaTarefa.due_date || null,
-                    usuario_id: 1  
+                    usuario_id: parseInt(usuarioId) // ✅ USAR O ID DO USUÁRIO LOGADO
                 })
             });
 
@@ -101,7 +115,7 @@ export default function Tarefas() {
             {/* Header/Banner */}
             <div className="tarefas-container">
                 <h1 className="tarefas-title">📅 Gerenciamento de Tarefas</h1>
-                <p className="tarefas-message">Adicione e visualize suas tarefas com datas!</p>
+                <p className="tarefas-message">Olá, {usuarioNome}! Aqui estão suas tarefas.</p>
             </div>
             
             {/* Área de Criação de Tarefas */}
@@ -129,7 +143,7 @@ export default function Tarefas() {
                     <button 
                         type="submit" 
                         className="btn-adicionar"
-                        disabled={carregando}
+                        disabled={carregando || !usuarioId}
                     >
                         {carregando ? '⏳ Adicionando...' : '➕ Adicionar Tarefa'}
                     </button>
@@ -144,7 +158,7 @@ export default function Tarefas() {
 
             {/* Estatísticas */}
             <div className="lista-tarefas-container">
-                <h3>📊 Estatísticas</h3>
+                <h3>📊 Estatísticas de {usuarioNome}</h3>
                 <div style={{ 
                     display: 'grid', 
                     gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', 
@@ -170,12 +184,16 @@ export default function Tarefas() {
                 </div>
             </div>
             
-            {/* Lista de Tarefas - APENAS VISUALIZAÇÃO */}
+            {/* Lista de Tarefas*/}
             <div className="lista-tarefas-container">
                 <h3>📋 Suas Tarefas</h3>
                 <div className="tarefas-list">
                     {carregandoTarefas ? (
                         <p className="lista-carregando">Carregando tarefas...</p>
+                    ) : !usuarioId ? (
+                        <div className="input-tarefa lista-vazia" style={{ color: '#dc3545' }}>
+                            ❌ Erro: Usuário não identificado. Faça login novamente.
+                        </div>
                     ) : tarefas.length === 0 ? (
                         <div className="input-tarefa lista-vazia">
                             Nenhuma tarefa cadastrada. Adicione sua primeira tarefa acima!

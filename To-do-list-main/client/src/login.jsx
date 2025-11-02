@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import './App.css'; 
-
 import { Link, useNavigate } from 'react-router-dom';
 
 function Login() {
@@ -28,8 +27,12 @@ function Login() {
         throw new Error(data.error || 'Erro ao fazer login');
       }
 
-      alert(`Bem-vindo de volta!`);
-      navigate('/tarefas')
+      // ✅ SALVAR O ID DO USUÁRIO NO localStorage
+      localStorage.setItem('usuario_id', data.usuario.id);
+      localStorage.setItem('usuario_nome', data.usuario.nome);
+
+      alert(`Bem-vindo de volta, ${data.usuario.nome}!`);
+      navigate('/tarefas');
       
     } catch (error) {
       alert(error.message);
