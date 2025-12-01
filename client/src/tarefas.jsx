@@ -10,6 +10,7 @@ export default function Tarefas() {
     const [carregando, setCarregando] = useState(false);
     const [tarefas, setTarefas] = useState([]); 
     const [carregandoTarefas, setCarregandoTarefas] = useState(true);
+    const [notificacao, setNotificacao] = useState({ mensagem: "", tipo: "" }); // ✅ NOVA NOTIFICAÇÃO
     
     // ✅ PEGAR O ID DO USUÁRIO LOGADO
     const usuarioId = localStorage.getItem('usuario_id');
@@ -38,10 +39,81 @@ export default function Tarefas() {
         }
     };
 
+    // ✅ 1. FUNÇÃO PARA EXCLUIR TAREFA
+    const excluirTarefa = async (tarefaId) => {
+        if (!window.confirm("Tem certeza que deseja excluir esta tarefa?")) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:5000/api/tarefas/${tarefaId}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                buscarTarefas();
+                mostrarNotificacao("Tarefa excluída com sucesso!", "sucesso");
+            } else {
+                mostrarNotificacao("Erro ao excluir tarefa", "erro");
+            }
+        } catch (error) {
+            console.error("Erro ao excluir tarefa:", error);
+            mostrarNotificacao("Erro ao excluir tarefa", "erro");
+        }
+    };
+
+    // ✅ 2. FUNÇÃO PARA CONCLUIR TAREFA
+    const concluirTarefa = async (tarefaId) => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/tarefas/${tarefaId}/concluir`, {
+                method: 'PATCH',
+            });
+
+            if (response.ok) {
+                buscarTarefas();
+                // ✅ NOTIFICAÇÃO DE CONCLUSÃO
+                mostrarNotificacao("🎉 Parabéns! Tarefa concluída!", "sucesso");
+            } else {
+                mostrarNotificacao("Erro ao concluir tarefa", "erro");
+            }
+        } catch (error) {
+            console.error("Erro ao concluir tarefa:", error);
+            mostrarNotificacao("Erro ao concluir tarefa", "erro");
+        }
+    };
+
+    // ✅ 3. FUNÇÃO PARA REABRIR TAREFA
+    const reabrirTarefa = async (tarefaId) => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/tarefas/${tarefaId}/reabrir`, {
+                method: 'PATCH',
+            });
+
+            if (response.ok) {
+                buscarTarefas();
+                // ✅ NOTIFICAÇÃO DE PENDÊNCIA
+                mostrarNotificacao("⚠️ Tarefa marcada como pendente!", "aviso");
+            } else {
+                mostrarNotificacao("Erro ao reabrir tarefa", "erro");
+            }
+        } catch (error) {
+            console.error("Erro ao reabrir tarefa:", error);
+            mostrarNotificacao("Erro ao reabrir tarefa", "erro");
+        }
+    };
+
+    // ✅ FUNÇÃO PARA MOSTRAR NOTIFICAÇÕES
+    const mostrarNotificacao = (mensagem, tipo) => {
+        setNotificacao({ mensagem, tipo });
+        setTimeout(() => {
+            setNotificacao({ mensagem: "", tipo: "" });
+        }, 4000);
+    };
+
     // Buscar tarefas quando o componente carregar
     useEffect(() => {
         buscarTarefas();
-    }, [usuarioId]); // ✅ Recarregar quando o usuarioId mudar
+    }, [usuarioId]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -68,21 +140,21 @@ export default function Tarefas() {
                 body: JSON.stringify({
                     descricao: novaTarefa.descricao,
                     due_date: novaTarefa.due_date || null,
-                    usuario_id: parseInt(usuarioId) // ✅ USAR O ID DO USUÁRIO LOGADO
+                    usuario_id: parseInt(usuarioId)
                 })
             });
 
             const data = await response.json();
 
             if (response.ok) {
-                setMensagem('✅ Tarefa adicionada com sucesso!');
+                mostrarNotificacao('✅ Tarefa adicionada com sucesso!', 'sucesso');
                 setNovaTarefa({ descricao: '', due_date: '' });
                 buscarTarefas();
             } else {
-                setMensagem(`❌ Erro: ${data.error}`);
+                mostrarNotificacao(`❌ Erro: ${data.error}`, 'erro');
             }
         } catch (error) {
-            setMensagem('❌ Erro de conexão com o servidor');
+            mostrarNotificacao('❌ Erro de conexão com o servidor', 'erro');
             console.error('Erro:', error);
         } finally {
             setCarregando(false);
@@ -117,6 +189,13 @@ export default function Tarefas() {
                 <h1 className="tarefas-title">📅 Gerenciamento de Tarefas</h1>
                 <p className="tarefas-message">Olá, {usuarioNome}! Aqui estão suas tarefas.</p>
             </div>
+
+            {/* ✅ NOTIFICAÇÃO NOVA */}
+            {notificacao.mensagem && (
+                <div className={`notificacao ${notificacao.tipo}`}>
+                    {notificacao.mensagem}
+                </div>
+            )}
             
             {/* Área de Criação de Tarefas */}
             <div className="criar-tarefa-container">
@@ -250,6 +329,60 @@ export default function Tarefas() {
                                                          estaAtrasada(tarefa.due_date) ? 'Atrasada' : 'Pendente'}
                                                     </span>
                                                 </div>
+                                            </div>
+
+                                            {/* ✅ BOTÕES DE AÇÃO */}
+                                            <div style={{ marginTop: '15px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                                                {tarefa.concluida ? (
+                                                    <button 
+                                                        onClick={() => reabrirTarefa(tarefa.id)}
+                                                        className="btn-reabrir"
+                                                        style={{
+                                                            padding: '8px 12px',
+                                                            backgroundColor: '#f39c12',
+                                                            color: 'white',
+                                                            border: 'none',
+                                                            borderRadius: '4px',
+                                                            cursor: 'pointer',
+                                                            fontSize: '12px'
+                                                        }}
+                                                    >
+                                                        🔄 Reabrir
+                                                    </button>
+                                                ) : (
+                                                    <button 
+                                                        onClick={() => concluirTarefa(tarefa.id)}
+                                                        className="btn-concluir"
+                                                        style={{
+                                                            padding: '8px 12px',
+                                                            backgroundColor: '#27ae60',
+                                                            color: 'white',
+                                                            border: 'none',
+                                                            borderRadius: '4px',
+                                                            cursor: 'pointer',
+                                                            fontSize: '12px'
+                                                        }}
+                                                    >
+                                                        ✅ Concluir
+                                                    </button>
+                                                )}
+                                                
+                                                {/* ✅ BOTÃO EXCLUIR */}
+                                                <button 
+                                                    onClick={() => excluirTarefa(tarefa.id)}
+                                                    className="btn-excluir"
+                                                    style={{
+                                                        padding: '8px 12px',
+                                                        backgroundColor: '#e74c3c',
+                                                        color: 'white',
+                                                        border: 'none',
+                                                        borderRadius: '4px',
+                                                        cursor: 'pointer',
+                                                        fontSize: '12px'
+                                                    }}
+                                                >
+                                                    🗑️ Excluir
+                                                </button>
                                             </div>
                                         </div>
                                     </div>

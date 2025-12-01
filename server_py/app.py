@@ -38,14 +38,17 @@ class Tarefa(db.Model):
         return f"<Tarefa {self.descricao}>"
 
     def to_dict(self):
+        status = "concluída" if self.concluida else "pendente"
         return {
-            'id': self.id,
-            'descricao': self.descricao,
-            'concluida': self.concluida,
-            'data_criacao': self.data_criacao.isoformat() if self.data_criacao else None,
-            'usuario_id': self.usuario_id,
-            'due_date': self.due_date.isoformat() if self.due_date else None
-        }
+        'id': self.id,
+        'descricao': self.descricao,
+        'concluida': self.concluida,
+        'data_criacao': self.data_criacao.isoformat() if self.data_criacao else None,
+        'usuario_id': self.usuario_id,
+        'due_date': self.due_date.isoformat() if self.due_date else None,
+        'status': status,
+        'atrasada': self.due_date and not self.concluida and self.due_date < datetime.utcnow()
+    }
 
 # Inicialização do banco (agora app já existe)
 with app.app_context():
@@ -172,6 +175,42 @@ def atualizar_due_date(tarefa_id):
 
     db.session.commit()
     return jsonify({"message": "Due date atualizado", "tarefa": tarefa.to_dict()})
+
+@app.route("/api/tarefas/<int:tarefa_id>", methods=["DELETE"])
+def excluir_tarefa(tarefa_id):
+    try:
+        tarefa = Tarefa.query.get_or_404(tarefa_id)
+        db.session.delete(tarefa)
+        db.session.commit()
+        return jsonify({"message": "Tarefa excluída com sucesso!"})
+    except Exception as e:
+        return jsonify({"error": f"Erro ao excluir tarefa: {str(e)}"}), 500
+
+@app.route("/api/tarefas/<int:tarefa_id>/concluir", methods=["PATCH"])
+def concluir_tarefa(tarefa_id):
+    try:
+        tarefa = Tarefa.query.get_or_404(tarefa_id)
+        tarefa.concluida = True
+        db.session.commit()
+        return jsonify({
+            "message": "Tarefa concluída com sucesso!",
+            "tarefa": tarefa.to_dict()
+        })
+    except Exception as e:
+        return jsonify({"error": f"Erro ao concluir tarefa: {str(e)}"}), 500
+
+@app.route("/api/tarefas/<int:tarefa_id>/reabrir", methods=["PATCH"])
+def reabrir_tarefa(tarefa_id):
+    try:
+        tarefa = Tarefa.query.get_or_404(tarefa_id)
+        tarefa.concluida = False
+        db.session.commit()
+        return jsonify({
+            "message": "Tarefa reaberta!",
+            "tarefa": tarefa.to_dict()
+        })
+    except Exception as e:
+        return jsonify({"error": f"Erro ao reabrir tarefa: {str(e)}"}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
